@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    id="my-cordova-plugin"
+    version="1.0.0">
+    <name>Cordova Plugin Template</name>
+    <description></description>
+    <license>MIT</license>
+    <keywords></keywords>
+    <repo>https://github.com/driftyco/cordova-plugin-template.git</repo>
+    <issue>https://github.com/driftyco/cordova-plugin-template/issues</issue>
+
+    <!-- android -->
+    <platform name="android">
+      <js-module src="www/plugin.js" name="plugin">
+        <runs/>
+
+        <!-- This is the window variable name you want, like window.MyCordovaPlugin -->
+        <clobbers target="MyCordovaPlugin" />
+      </js-module>
+      <config-file target="res/xml/config.xml" parent="/*">
+        <feature name="MyCordovaPlugin">
+          <param name="android-package" value="com.example.MyCordovaPlugin" />
+          <param name="onload" value="true" />
+        </feature>
+      </config-file>
+      <source-file src="src/android/com/example/TeacherPlugin.java" target-dir="src/com/example/" />
+      <source-file src="src/android/com/example/MyCordovaPlugin.java" target-dir="src/com/example/" />
+      <source-file src="src/android/com/usc/activation/ActivationClient.java" target-dir="src/com/usc/activation/" />
+      <source-file src="src/android/com/usc/tools/CommonTools.java" target-dir="src/com/usc/tools/" />
+      <source-file src="src/android/com/usc/tools/UscCommonObservable.java" target-dir="src/com/usc/tools/" />
+      <source-file src="src/android/org/usc/student/StudentClient.java" target-dir="src/org/usc/student/" />
+      <source-file src="src/android/org/usc/student/StudentClientCallBack.java" target-dir="src/org/usc/student/" />
+      <source-file src="src/android/org/usc/teacher/TeacherClient.java" target-dir="src/org/usc/teacher/" />
+      <source-file src="src/android/org/usc/teacher/TeacherClientCallBack.java" target-dir="src/org/usc/teacher/" />
+     
+    </platform>
+
+    <!-- ios -->
+    <platform name="ios">
+        <js-module src="www/plugin.js" name="plugin">
+            <runs/>
+            <clobbers target="MyCordovaPlugin" />
+        </js-module>
+        <config-file target="config.xml" parent="/*">
+            <feature name="MyCordovaPlugin">
+                <param name="ios-package" value="MyCordovaPlugin" onload="true" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/MyCordovaPlugin.h" />
+        <source-file src="src/ios/MyCordovaPlugin.m" />
+    </platform>
+</plugin>
