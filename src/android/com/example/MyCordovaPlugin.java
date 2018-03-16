@@ -18,6 +18,10 @@ import android.os.RemoteException;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.lang.Integer;
+import java.lang.Boolean;
+import android.util.Log;
+
 
 import android.util.Log;
 
@@ -33,6 +37,8 @@ import java.util.List;
 
 import org.usc.student.StudentClient;
 import org.usc.student.StudentClientCallBack;
+import org.usc.teacher.TeacherClient;
+import org.usc.teacher.TeacherClientCallBack;
 import android.widget.EditText;
 import android.app.AlertDialog;
 import android.text.Editable;
@@ -65,7 +71,20 @@ public class MyCordovaPlugin extends CordovaPlugin {
       ActivationClient.get().init(args.getString(0), ctcx);
     } else if(action.equals("selectTeacher")) {
       // An example of returning data back to the web layer
-      StudentClient.get().selectTeacher(args.getString(0));
+      final CordovaInterface cordova = this.cordova;
+
+      Runnable runnable = new Runnable() {
+         public void run() {
+          try {
+            StudentClient.get().selectTeacher(args.getString(0));
+          } catch(Exception e) {
+
+          }
+         };
+       };
+
+       this.cordova.getActivity().runOnUiThread(runnable);
+      
     } else if(action.equals("student-client")) {
       if (!StudentClient.get().active) {
         // disable buttons
@@ -134,36 +153,120 @@ public class MyCordovaPlugin extends CordovaPlugin {
 
       this.cordova.getActivity().runOnUiThread(runnable);
     
+    } else if (action.equals("getStudents")) {
+      final CordovaInterface cordova = this.cordova;
+
+      Runnable runnable = new Runnable() {
+         public void run() {
+
+          try {
+              /*Context ctcx = cordova.getActivity();
+              List<String> students = TeacherClient.get().getStudents();
+              if (students != null && students.size() > 0) {
+                JSONArray jsArray = new JSONArray(students);  
+                final PluginResult result = new PluginResult(PluginResult.Status.OK, jsArray);
+                callbackContext.sendPluginResult(result);
+              }*/
+
+              Context ctcx = cordova.getActivity();
+              List<String> students = new ArrayList<String>();
+              students.add("inahp");
+              students.add("ramuk");
+              students.add("yadu");
+              
+              if (students != null && students.size() > 0) {
+                JSONArray jsArray = new JSONArray(students);  
+                final PluginResult result = new PluginResult(PluginResult.Status.OK, jsArray);
+                callbackContext.sendPluginResult(result); 
+              }
+              
+              /*arrayAdapter.clear();
+
+              for (String teacher : students) {
+                  Map studentData = StudentClient.get().getTeacherData(teacher);
+                  TeacherItem teacherItem = new TeacherItem(teacher);
+                  arrayAdapter.add(teacherItem);
+              }
+
+              String currentTeacher = StudentClient.get().currentTeacher();
+
+              for (int i = 0; i < arrayAdapter.getCount(); i++) {
+                  TeacherItem teacherItem = arrayAdapter.getItem(i);
+                  listViewTeachers.setItemChecked(i, teacherItem.name.equalsIgnoreCase(currentTeacher));
+              }*/
+
+              
+            } catch (Exception e) {
+              
+            }
+
+         };
+      };
+
+      this.cordova.getActivity().runOnUiThread(runnable);
+    
+    } else if(action.equals("selectStudent")) {
+      // An example of returning data back to the web layer
+      final CordovaInterface cordova = this.cordova;
+
+      Runnable runnable = new Runnable() {
+         public void run() {
+          try {
+            TeacherClient.get().setStudentSelected(args.getString(0), Boolean.parseBoolean(args.getString(1)));
+          } catch(Exception e) {
+
+          }
+         };
+       };
+
+       this.cordova.getActivity().runOnUiThread(runnable);
+      
     } else if(action.equals("showActivationDialog")) {
       final CordovaInterface cordova = this.cordova;
 
       Runnable runnable = new Runnable() {
          public void run() {
 
-          Context ctcx = cordova.getActivity();
-          final EditText textEntryView = new EditText(ctcx);
-          textEntryView.setText("USC-STUDENT-DEMO");
-          textEntryView.setTextColor(Color.parseColor("#000000"));
-          
-          AlertDialog alertDialog = new AlertDialog.Builder(ctcx, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).setTitle("Enter product ID").setView(textEntryView).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+          try {
+            Context ctcx = cordova.getActivity();
+            final EditText textEntryView = new EditText(ctcx);
+            textEntryView.setText(args.getString(0));
+            textEntryView.setTextColor(Color.parseColor("#000000"));
+            
+            AlertDialog alertDialog = new AlertDialog.Builder(ctcx, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).setTitle("Enter product ID").setView(textEntryView).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+              public void onClick(DialogInterface dialog, int whichButton) {
 
-              try {
-                boolean isActivated = ActivationClient.get().isActivated(ActivationClient.PRODUCT_TYPE_STUDENT);
+                try {
 
-                if (!isActivated) {
-                    Editable text = textEntryView.getText();
-                    boolean activate = ActivationClient.get().activate(text.toString(), ActivationClient.PRODUCT_TYPE_STUDENT);
+                  if (args.getString(0).equals("USC-TEACHER-DEMO")) {
+                    boolean isActivated = ActivationClient.get().isActivated(ActivationClient.PRODUCT_TYPE_TEACHER);
 
-                    if (activate)
-                      Toast.makeText(ctcx, "activate success", Toast.LENGTH_LONG).show();
-                    else
-                      Toast.makeText(ctcx, "activate failed", Toast.LENGTH_LONG).show();  
-                } else {
-                  Toast.makeText(ctcx, "Activated", Toast.LENGTH_LONG).show();  
-                }
-                
+                    if (!isActivated) {
+                        Editable text = textEntryView.getText();
+                        boolean activate = ActivationClient.get().activate(text.toString(), ActivationClient.PRODUCT_TYPE_TEACHER);
 
+                        if (activate)
+                          Toast.makeText(ctcx, "activate success", Toast.LENGTH_LONG).show();
+                        else
+                          Toast.makeText(ctcx, "activate failed", Toast.LENGTH_LONG).show();  
+                    } else {
+                      Toast.makeText(ctcx, "Activated", Toast.LENGTH_LONG).show();  
+                    }
+                  } else {
+                    boolean isActivated = ActivationClient.get().isActivated(ActivationClient.PRODUCT_TYPE_STUDENT);
+
+                    if (!isActivated) {
+                        Editable text = textEntryView.getText();
+                        boolean activate = ActivationClient.get().activate(text.toString(), ActivationClient.PRODUCT_TYPE_STUDENT);
+
+                        if (activate)
+                          Toast.makeText(ctcx, "activate success", Toast.LENGTH_LONG).show();
+                        else
+                          Toast.makeText(ctcx, "activate failed", Toast.LENGTH_LONG).show();  
+                    } else {
+                      Toast.makeText(ctcx, "Activated", Toast.LENGTH_LONG).show();  
+                    }
+                  }
               } catch (Exception e) {
                 
               }
@@ -171,6 +274,10 @@ public class MyCordovaPlugin extends CordovaPlugin {
           }).create();
 
           alertDialog.show();
+
+          } catch (Exception e) {
+              
+          }
 
          };
       };
@@ -235,17 +342,23 @@ public class MyCordovaPlugin extends CordovaPlugin {
 
           Context ctcx = cordova.getActivity().getApplicationContext();
           try {
-              boolean activated = ActivationClient.get().isActivated(ActivationClient.PRODUCT_TYPE_STUDENT);
+              boolean activated = ActivationClient.get().isActivated(Integer.parseInt(args.getString(0)));
               
               if (!activated) {
                 Toast.makeText(ctcx, "please activate first", Toast.LENGTH_LONG).show();
               } else {
                 try {
-                  StudentClient.get().init(cordova.getActivity());
-                  Toast.makeText(ctcx, "connect success", Toast.LENGTH_LONG).show();
+                  if (args.getString(0).equals("1")) {
+                    StudentClient.get().init(cordova.getActivity());
+                    Toast.makeText(ctcx, "connect success", Toast.LENGTH_LONG).show();
+                  } else {
+                    TeacherClient.get().init(cordova.getActivity());
+                      Toast.makeText(ctcx, "connect success", Toast.LENGTH_LONG).show();
+                  }
                 } catch (Exception e) {
-                  Toast.makeText(ctcx, "connect failed", Toast.LENGTH_LONG).show();
-                }
+                   Toast.makeText(ctcx, "connect failed", Toast.LENGTH_LONG).show();
+                 }
+                
               }
             } catch (Exception e1) {
               Toast.makeText(ctcx, "activation failed: " + e1.toString(), Toast.LENGTH_LONG).show();  
@@ -283,9 +396,15 @@ public class MyCordovaPlugin extends CordovaPlugin {
       this.cordova.getActivity().runOnUiThread(new Runnable() {
         @Override
         public void run() {
+
             try {
-              StudentClient.get().registerCallBack(StudentClientCallBack.get());
-              Toast.makeText(ctcx, "Register CallBack success", Toast.LENGTH_LONG).show();
+              if (args.getString(0).equals("student")) {
+                StudentClient.get().registerCallBack(StudentClientCallBack.get());
+                Toast.makeText(ctcx, "Register CallBack success", Toast.LENGTH_LONG).show();
+              } else {
+                TeacherClient.get().registerCallBack(cordova.getActivity());
+                Toast.makeText(ctcx, "Register CallBack success", Toast.LENGTH_LONG).show();
+              }
             } catch (Exception e) {
         
             }
@@ -342,7 +461,21 @@ public class MyCordovaPlugin extends CordovaPlugin {
         }
       });
     } else if (action.equals("teacherActivation")) {
-      teacherPlugin.teacherActivation(action + "saf", args, callbackContext, this.cordova);
+      PluginResult result = teacherPlugin.teacherActivation(action, args, this.cordova);
+      callbackContext.sendPluginResult(result);
+    } else if(action.equals("connectTeacherObserver")) {
+      PluginResult result = teacherPlugin.connectTeacherObserver(action, args, this.cordova);
+      callbackContext.sendPluginResult(result);
+    } else if (action.equals("attention")) {
+      teacherPlugin.attention(action, args, this.cordova);
+    } else if (action.equals("teacherStop")) {
+      teacherPlugin.teacherStop(action, args, this.cordova);
+    } else if (action.equals("setTeacherName")) {
+      teacherPlugin.setTeacherName(action, args, this.cordova);
+    } else if (action.equals("screenBraodCast")) {
+      teacherPlugin.screenBraodCast(action, args, this.cordova);
+    } else if (action.equals("remoteAssistance")) {
+      teacherPlugin.remoteAssistance(action, args, this.cordova);
     }
     return true;
   }

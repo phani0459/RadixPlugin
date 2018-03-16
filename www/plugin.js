@@ -46,18 +46,45 @@ var MyCordovaPlugin = {
   handDown: function(message) {
     exec(null, null, PLUGIN_NAME, 'handDown', [message]);
   },
-  teacherActivation: function(message) {
-    exec(null, null, PLUGIN_NAME, 'activation', [message]);
+  connectTeacherBtn: function(message) {
+    exec(null, null, PLUGIN_NAME, 'connectTeacherBtn', [message]);
   },
   getTeachers: function(cb, message) {
     exec(cb,null, PLUGIN_NAME, 'getTeachers', [message]);
   },
+  getStudents:function(cb, message) {
+    exec(cb,null, PLUGIN_NAME, 'getStudents', [message]);
+  },
   setStudentName: function(cb, message) {
-    exec(cb,null, PLUGIN_NAME, 'setStudentName', [message]);
+    exec(cb, null, PLUGIN_NAME, 'setStudentName', [message]);
   },
   selectTeacher: function(teacherName) {
     exec(null, null, PLUGIN_NAME, 'selectTeacher', [teacherName]);
+  }, 
+  selectStudent: function(studentName, isChecked) {
+    exec(null, null, PLUGIN_NAME, 'selectStudent', [studentName, isChecked]);
   },
+  teacher: function(cb, fromTeacher) {
+    exec(cb, null, PLUGIN_NAME, 'teacherActivation', [fromTeacher]);
+  },
+  connectTeacherObserver: function(cb, phrase) {
+    exec(cb, null, PLUGIN_NAME, 'connectTeacherObserver', [phrase]);
+  },
+  attention: function(phrase) {
+    exec(null, null, PLUGIN_NAME, 'attention', [phrase]);
+  },
+  teacherStop: function(phrase) {
+    exec(null, null, PLUGIN_NAME, 'teacherStop', [phrase]);
+  },
+  setTeacherName: function(phrase) {
+    exec(null, null, PLUGIN_NAME, 'setTeacherName', [phrase]);
+  },
+  screenBraodCast: function(phrase) {
+    exec(null, null, PLUGIN_NAME, 'screenBraodCast', [phrase]);
+  },
+  remoteAssistance: function(phrase) {
+    exec(null, null, PLUGIN_NAME, 'remoteAssistance', [phrase]);
+  }
 };
 
 module.exports = MyCordovaPlugin;
